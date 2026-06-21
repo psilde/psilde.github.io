@@ -17,626 +17,346 @@
     }
 
     :root {
-      --bg:         #0d1117;
-      --border:     #21262d;
-      --border-mid: #30363d;
-      --text:       #e6edf3;
-      --text-muted: #7d8590;
-      --text-dim:   #4d5562;
-      --accent:     #388bfd;
-      --green:      #3fb950;
+      --bg:     #0d1117;
+      --border: #21262d;
+      --text:   #e6edf3;
+      --muted:  #7d8590;
+      --dim:    #4d5562;
+      --accent: #388bfd;
+      --green:  #3fb950;
     }
 
-    html { scroll-behavior: smooth; }
-
-    body {
+    html, body {
+      height: 100%;
+      overflow: hidden;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
+    /* top accent line */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), var(--green) 35%, transparent 65%);
+      z-index: 100;
+    }
+
     /* ── Custom cursor ── */
-    #cursor-dot {
+    #cd {
       position: fixed;
       top: 0; left: 0;
       z-index: 9999;
-      width: 5px;
-      height: 5px;
+      width: 5px; height: 5px;
       background: var(--text);
       border-radius: 50%;
       pointer-events: none;
       will-change: transform;
-      transform: translate(-50%, -50%);
       opacity: 0;
       transition: opacity 0.3s;
     }
-
-    #cursor-ring {
+    #cr {
       position: fixed;
       top: 0; left: 0;
       z-index: 9998;
-      width: 32px;
-      height: 32px;
-      border: 1px solid rgba(56, 139, 253, 0.5);
+      width: 30px; height: 30px;
+      border: 1px solid rgba(56,139,253,0.5);
       border-radius: 50%;
       pointer-events: none;
       will-change: transform;
-      transform: translate(-50%, -50%);
       opacity: 0;
-      transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease, opacity 0.3s;
+      transition: width .2s, height .2s, border-color .2s, opacity .3s;
     }
+    body.m #cd, body.m #cr { opacity: 1; }
+    #cr.h { width: 48px; height: 48px; border-color: rgba(56,139,253,0.9); }
 
-    body.has-mouse #cursor-dot,
-    body.has-mouse #cursor-ring { opacity: 1; }
-
-    #cursor-ring.hovered {
-      width: 52px;
-      height: 52px;
-      border-color: rgba(56, 139, 253, 0.9);
-    }
-
-    /* ── Nav ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      height: 60px;
-      display: flex;
-      align-items: center;
-    }
-
-    nav.scrolled {
-      background: rgba(13,17,23,0.9);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-inner {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nav-logo {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      text-decoration: none;
-      letter-spacing: -0.01em;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 36px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--text); }
-
-    /* ── Hero ── */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 80px 48px;
-      width: 100%;
+    /* ── Layout ── */
+    .layout {
+      height: 100vh;
       display: grid;
-      grid-template-columns: 1fr 480px;
-      align-items: center;
-      gap: 48px;
+      grid-template-columns: 1fr 1fr;
     }
 
-    .hero-availability {
+    /* ── Left ── */
+    .left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(40px, 6vh, 72px) 48px clamp(36px, 5vh, 60px) clamp(40px, 5vw, 80px);
+      border-right: 1px solid var(--border);
+    }
+
+    /* availability */
+    .avail {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-bottom: 28px;
+      color: var(--dim);
+      margin-bottom: clamp(16px, 2.5vh, 28px);
     }
-
-    .avail-dot {
-      width: 6px;
-      height: 6px;
+    .dot {
+      width: 6px; height: 6px;
       background: var(--green);
       border-radius: 50%;
-      animation: pulse-dot 2.5s ease-in-out infinite;
       flex-shrink: 0;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(63,185,80,0.5); }
+      50%       { box-shadow: 0 0 0 5px rgba(63,185,80,0); }
     }
 
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(63,185,80,0.4); }
-      50%       { opacity: 0.6; box-shadow: 0 0 0 5px rgba(63,185,80,0); }
-    }
-
-    .hero-name {
-      font-size: clamp(56px, 7.5vw, 96px);
+    /* name */
+    h1 {
+      font-size: clamp(48px, 5.2vw, 80px);
       font-weight: 800;
       letter-spacing: -0.04em;
-      line-height: 0.95;
-      margin-bottom: 28px;
-      background: linear-gradient(165deg, #e6edf3 30%, #7d8590 100%);
+      line-height: 0.92;
+      background: linear-gradient(160deg, #e6edf3 25%, #6e7681 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      margin-bottom: clamp(16px, 2.5vh, 24px);
     }
 
-    .hero-tagline {
-      font-size: clamp(15px, 1.8vw, 18px);
+    /* tagline */
+    .tagline {
+      font-size: clamp(13px, 1.3vw, 16px);
       font-weight: 400;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 6px;
     }
 
-    .hero-sub {
-      font-size: 13px;
-      color: var(--text-dim);
-      margin-bottom: 28px;
+    .sub {
+      font-size: 12px;
+      color: var(--dim);
+      margin-bottom: clamp(10px, 1.5vh, 18px);
     }
 
-    .hero-meta {
+    .meta {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 44px;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--dim);
       font-variant-numeric: tabular-nums;
       letter-spacing: 0.02em;
     }
+    .meta-sep { opacity: 0.35; }
 
-    .hero-sep { opacity: 0.4; }
+    /* ── Projects ── */
+    .projects { flex: 0 0 auto; }
 
-    .hero-actions {
+    .project-row {
+      display: grid;
+      grid-template-columns: 26px 1fr 1fr 16px;
+      gap: 16px;
+      align-items: center;
+      padding: clamp(10px, 1.4vh, 15px) 0;
+      border-top: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+    }
+    .project-row:last-child { border-bottom: 1px solid var(--border); }
+
+    .project-row::before {
+      content: '';
+      position: absolute;
+      inset: 0 -8px;
+      background: rgba(56,139,253,0.03);
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .project-row:hover::before { opacity: 1; }
+
+    .p-num {
+      font-size: 10px;
+      color: var(--dim);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .p-name {
+      font-size: clamp(13px, 1.2vw, 15px);
+      font-weight: 600;
+      color: var(--text);
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .project-row:hover .p-name { color: var(--accent); }
+
+    .p-desc {
+      font-size: 11px;
+      color: var(--dim);
+      text-align: right;
+    }
+
+    .p-arrow {
+      font-size: 13px;
+      color: var(--dim);
+      justify-self: end;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .project-row:hover .p-arrow {
+      transform: translate(2px, -2px);
+      color: var(--accent);
+    }
+
+    /* ── Bottom links ── */
+    .links {
       display: flex;
-      gap: 12px;
+      align-items: center;
+      gap: 20px;
       flex-wrap: wrap;
     }
 
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: inherit;
-      font-size: 13px;
+    .link {
+      font-size: 12px;
       font-weight: 500;
-      color: #0d1117;
-      background: var(--text);
-      padding: 10px 22px;
+      color: var(--dim);
       text-decoration: none;
-      border-radius: 6px;
-      transition: opacity 0.2s;
-      border: none;
+      transition: color 0.2s;
+      letter-spacing: 0.01em;
     }
-    .btn-primary:hover { opacity: 0.85; }
+    .link:hover { color: var(--muted); }
 
-    .btn-ghost {
-      display: inline-flex;
+    .link-sep {
+      width: 3px; height: 3px;
+      background: var(--dim);
+      border-radius: 50%;
+      opacity: 0.4;
+      flex-shrink: 0;
+    }
+
+    .copy {
+      font-size: 11px;
+      color: var(--dim);
+      opacity: 0.5;
+      margin-left: auto;
+    }
+
+    /* ── Right / canvas ── */
+    .right {
+      display: flex;
       align-items: center;
-      gap: 8px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      border: 1px solid var(--border-mid);
-      padding: 10px 22px;
-      text-decoration: none;
-      background: transparent;
-      border-radius: 6px;
-      transition: color 0.2s, border-color 0.2s;
+      justify-content: center;
+      position: relative;
     }
-    .btn-ghost:hover { color: var(--text); border-color: var(--text-dim); }
 
-    /* ── Canvas wrap ── */
-    .hero-canvas-wrap {
+    .canvas-wrap {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .hero-canvas-wrap::before {
+    .canvas-wrap::before {
       content: '';
       position: absolute;
       inset: -80px;
-      background: radial-gradient(ellipse at center, rgba(56,139,253,0.06) 0%, transparent 65%);
+      background: radial-gradient(ellipse at center, rgba(56,139,253,0.06) 0%, transparent 68%);
       pointer-events: none;
     }
 
-    #hero-canvas {
-      width: 420px;
-      height: 420px;
+    #c {
       display: block;
+      width: clamp(280px, 38vw, 460px);
+      aspect-ratio: 1;
       position: relative;
       z-index: 1;
     }
 
-    /* ── Sections ── */
-    .section-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 120px 48px;
-    }
-
-    .section-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 48px;
-    }
-
-    /* ── Work list ── */
-    .work-list { display: flex; flex-direction: column; }
-
-    .work-item {
-      display: grid;
-      grid-template-columns: 36px 1fr auto 120px 20px;
-      gap: 24px;
-      align-items: center;
-      padding: 22px 8px;
-      border-top: 1px solid var(--border);
-      text-decoration: none;
-      color: inherit;
-      position: relative;
-      border-radius: 4px;
-      transition: background 0.15s;
-    }
-
-    .work-item:last-child { border-bottom: 1px solid var(--border); }
-
-    .work-item:hover { background: rgba(56,139,253,0.03); }
-
-    .work-num {
-      font-size: 11px;
-      color: var(--text-dim);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .work-title {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .work-name {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.01em;
-      transition: color 0.2s;
-    }
-    .work-item:hover .work-name { color: var(--accent); }
-
-    .work-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .work-collab {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      border: 1px solid var(--border);
-      padding: 2px 7px;
-      border-radius: 4px;
-      white-space: nowrap;
-      justify-self: end;
-    }
-
-    .work-tags {
-      font-size: 12px;
-      color: var(--text-dim);
-      text-align: right;
-      line-height: 1.6;
-    }
-
-    .work-arrow {
-      font-size: 15px;
-      color: var(--text-dim);
-      transition: transform 0.2s, color 0.2s;
-      justify-self: end;
-    }
-    .work-item:hover .work-arrow {
-      transform: translate(3px, -3px);
-      color: var(--accent);
-    }
-
-    /* ── About ── */
-    #about .section-inner {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 80px;
-      align-items: start;
-    }
-
-    .about-bio {
-      font-size: 17px;
-      line-height: 1.8;
-      color: var(--text-muted);
-      margin-bottom: 40px;
-    }
-
-    .currently { display: flex; flex-direction: column; }
-
-    .currently-row {
-      display: flex;
-      gap: 24px;
-      padding: 14px 0;
-      border-top: 1px solid var(--border);
-      font-size: 14px;
-    }
-    .currently-row:last-child { border-bottom: 1px solid var(--border); }
-
-    .c-label { color: var(--text-dim); min-width: 80px; flex-shrink: 0; }
-    .c-val   { color: var(--text); font-weight: 500; }
-
-    /* ── Contact ── */
-    #contact .section-inner {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 80px;
-      align-items: start;
-    }
-
-    .contact-heading {
-      font-size: clamp(36px, 4vw, 56px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      margin-bottom: 36px;
-      background: linear-gradient(165deg, #e6edf3 30%, #7d8590 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .contact-links { display: flex; flex-direction: column; }
-
-    .contact-link {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-muted);
-      text-decoration: none;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border);
-      transition: color 0.2s;
-    }
-    .contact-link:first-child { border-top: 1px solid var(--border); }
-
-    .contact-link::after {
-      content: '↗';
-      font-size: 12px;
-      opacity: 0;
-      transform: translate(-4px, 4px);
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    .contact-link:hover { color: var(--text); }
-    .contact-link:hover::after { opacity: 1; transform: translate(0, 0); }
-
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 0;
-    }
-
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 48px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-copy, .footer-built {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 900px) {
-      .hero-inner {
-        grid-template-columns: 1fr;
-        padding: 120px 32px 64px;
-        text-align: center;
-      }
-      .hero-availability, .hero-actions, .hero-meta { justify-content: center; }
-      .hero-canvas-wrap { order: -1; margin-top: 64px; }
-      #hero-canvas { width: 260px; height: 260px; }
-      .work-item { grid-template-columns: 28px 1fr 20px; gap: 16px; }
-      .work-collab, .work-tags { display: none; }
-      #about .section-inner,
-      #contact .section-inner { grid-template-columns: 1fr; gap: 0; }
-      .nav-inner { padding: 0 24px; }
-      .section-inner { padding: 80px 24px; }
-    }
-
-    @media (max-width: 600px) {
-      .nav-links { gap: 20px; }
-      .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+    /* ── Mobile fallback ── */
+    @media (max-width: 700px) {
+      html, body { overflow: auto; }
+      .layout { grid-template-columns: 1fr; height: auto; }
+      .left { border-right: none; border-bottom: 1px solid var(--border); padding: 48px 28px 40px; }
+      .right { padding: 48px 28px; }
+      #c { width: clamp(220px, 70vw, 320px); }
+      .right { order: -1; }
       *, *::before, *::after { cursor: auto !important; }
-      #cursor-dot, #cursor-ring { display: none; }
+      #cd, #cr { display: none; }
+      .copy { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <div id="cursor-dot"></div>
-  <div id="cursor-ring"></div>
+  <div id="cd"></div>
+  <div id="cr"></div>
 
-  <!-- Nav -->
-  <nav id="nav">
-    <div class="nav-inner">
-      <a href="#hero" class="nav-logo">Paul Silver</a>
-      <ul class="nav-links">
-        <li><a href="#work">Work</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </div>
-  </nav>
+  <main class="layout">
 
-  <!-- Hero -->
-  <section id="hero">
-    <div class="hero-inner">
-      <div class="hero-text">
-        <div class="hero-availability">
-          <span class="avail-dot"></span>
-          Available for opportunities
-        </div>
-        <h1 class="hero-name">Paul<br>Silver.</h1>
-        <p class="hero-tagline">Building tools that solve real problems.</p>
-        <p class="hero-sub">Software Engineering Student &middot; Curtin University</p>
-        <div class="hero-meta">
+    <!-- LEFT: identity + projects + links -->
+    <div class="left">
+
+      <div class="intro">
+        <div class="avail"><span class="dot"></span>Available for opportunities</div>
+        <h1>Paul<br>Silver.</h1>
+        <p class="tagline">Building tools that solve real problems.</p>
+        <p class="sub">Software Engineering Student &middot; Curtin University</p>
+        <div class="meta">
           <span>Perth, WA</span>
-          <span class="hero-sep">&mdash;</span>
+          <span class="meta-sep">&mdash;</span>
           <span id="clock">00:00:00</span>
         </div>
-        <div class="hero-actions">
-          <a href="#work" class="btn-primary magnetic">See my work</a>
-          <a href="https://github.com/psilde" class="btn-ghost magnetic" target="_blank" rel="noopener">GitHub ↗</a>
-        </div>
       </div>
-      <div class="hero-canvas-wrap">
-        <canvas id="hero-canvas"></canvas>
-      </div>
-    </div>
-  </section>
 
-  <!-- Work -->
-  <section id="work">
-    <div class="section-inner">
-      <div class="section-label">Selected Work</div>
-      <div class="work-list">
-
-        <a class="work-item" href="https://github.com/psilde/slackbuilder" target="_blank" rel="noopener">
-          <span class="work-num">01</span>
-          <span class="work-title">
-            <span class="work-name">Slackbuilder</span>
-            <span class="work-desc">AI-powered desktop app for composing Slack messages with native clipboard formatting</span>
-          </span>
-          <span class="work-collab">Collab</span>
-          <span class="work-tags">Tauri &middot; React &middot; Rust</span>
-          <span class="work-arrow">↗</span>
+      <div class="projects">
+        <a class="project-row magnetic" href="https://github.com/psilde/slackbuilder" target="_blank" rel="noopener">
+          <span class="p-num">01</span>
+          <span class="p-name">Slackbuilder</span>
+          <span class="p-desc">Tauri &middot; React &middot; Rust</span>
+          <span class="p-arrow">↗</span>
         </a>
-
-        <a class="work-item" href="https://github.com/psilde/depth-public" target="_blank" rel="noopener">
-          <span class="work-num">02</span>
-          <span class="work-title">
-            <span class="work-name">Depth</span>
-            <span class="work-desc">Valorant companion app that reveals rank and stats for every player in your lobby</span>
-          </span>
-          <span class="work-collab"></span>
-          <span class="work-tags">Tauri &middot; React &middot; TypeScript</span>
-          <span class="work-arrow">↗</span>
+        <a class="project-row magnetic" href="https://github.com/psilde/depth-public" target="_blank" rel="noopener">
+          <span class="p-num">02</span>
+          <span class="p-name">Depth</span>
+          <span class="p-desc">Tauri &middot; React &middot; TypeScript</span>
+          <span class="p-arrow">↗</span>
         </a>
-
-        <a class="work-item" href="https://github.com/psilde/deal-detector" target="_blank" rel="noopener">
-          <span class="work-num">03</span>
-          <span class="work-title">
-            <span class="work-name">Deal Detector</span>
-            <span class="work-desc">Two-service pipeline that scrapes Facebook Marketplace and surfaces underpriced listings</span>
-          </span>
-          <span class="work-collab"></span>
-          <span class="work-tags">Java &middot; Spring Boot &middot; Playwright</span>
-          <span class="work-arrow">↗</span>
+        <a class="project-row magnetic" href="https://github.com/psilde/deal-detector" target="_blank" rel="noopener">
+          <span class="p-num">03</span>
+          <span class="p-name">Deal Detector</span>
+          <span class="p-desc">Java &middot; Spring Boot &middot; Playwright</span>
+          <span class="p-arrow">↗</span>
         </a>
-
-        <a class="work-item" href="https://github.com/psilde/cover-art" target="_blank" rel="noopener">
-          <span class="work-num">04</span>
-          <span class="work-title">
-            <span class="work-name">Cover Art</span>
-            <span class="work-desc">Spring Boot app that extracts every resolution of cover art from a Spotify URL</span>
-          </span>
-          <span class="work-collab"></span>
-          <span class="work-tags">Java &middot; Spring Boot &middot; Spotify</span>
-          <span class="work-arrow">↗</span>
+        <a class="project-row magnetic" href="https://github.com/psilde/cover-art" target="_blank" rel="noopener">
+          <span class="p-num">04</span>
+          <span class="p-name">Cover Art</span>
+          <span class="p-desc">Java &middot; Spring Boot &middot; Spotify</span>
+          <span class="p-arrow">↗</span>
         </a>
+      </div>
 
+      <div class="links">
+        <a class="link magnetic" href="https://github.com/psilde" target="_blank" rel="noopener">GitHub</a>
+        <span class="link-sep"></span>
+        <a class="link magnetic" href="https://www.linkedin.com/in/psilv/" target="_blank" rel="noopener">LinkedIn</a>
+        <span class="link-sep"></span>
+        <a class="link magnetic" href="mailto:psilver@outlook.com.au">psilver@outlook.com.au</a>
+        <span class="copy">&copy; 2026</span>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: 3D shape -->
+    <div class="right">
+      <div class="canvas-wrap">
+        <canvas id="c"></canvas>
       </div>
     </div>
-  </section>
 
-  <!-- About -->
-  <section id="about">
-    <div class="section-inner">
-      <div class="section-label">About</div>
-      <div class="about-content">
-        <p class="about-bio">I'm a software engineering student at Curtin University who builds things outside the classroom. My projects span desktop apps, backend pipelines, and API integrations &mdash; usually tools I actually wanted to exist.</p>
-        <div class="currently">
-          <div class="currently-row">
-            <span class="c-label">Studying</span>
-            <span class="c-val">Curtin University</span>
-          </div>
-          <div class="currently-row">
-            <span class="c-label">Building</span>
-            <span class="c-val">Slackbuilder, Depth</span>
-          </div>
-          <div class="currently-row">
-            <span class="c-label">Competing</span>
-            <span class="c-val">Valorant</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact">
-    <div class="section-inner">
-      <div class="section-label">Contact</div>
-      <div class="contact-content">
-        <h2 class="contact-heading">Let's talk.</h2>
-        <div class="contact-links">
-          <a class="contact-link magnetic" href="mailto:psilver@outlook.com.au">psilver@outlook.com.au</a>
-          <a class="contact-link magnetic" href="https://www.linkedin.com/in/psilv/" target="_blank" rel="noopener">linkedin.com/in/psilv</a>
-          <a class="contact-link magnetic" href="https://github.com/psilde" target="_blank" rel="noopener">github.com/psilde</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-inner">
-      <span class="footer-copy">&copy; 2026 Paul Silver</span>
-      <span class="footer-built">Perth, WA</span>
-    </div>
-  </footer>
+  </main>
 
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
@@ -645,131 +365,112 @@
   <script type="module">
     import * as THREE from 'three';
 
-    // ── Three.js: dual-layer counter-rotating icosahedron ──────────────────
+    // ── Three.js dual icosahedron ─────────────────────────────────────────
 
-    const canvas = document.getElementById('hero-canvas');
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
+    const canvas = document.getElementById('c');
+    const W = canvas.clientWidth;
+    const H = canvas.clientHeight;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setSize(w, h, false);
+    renderer.setSize(W, H, false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.z = 4.2;
 
-    // Outer icosahedron — blue
-    const geoOuter  = new THREE.IcosahedronGeometry(1.35, 1);
-    const matOuter  = new THREE.LineBasicMaterial({ color: 0x388bfd, transparent: true, opacity: 0.65 });
-    const meshOuter = new THREE.LineSegments(new THREE.EdgesGeometry(geoOuter), matOuter);
-    scene.add(meshOuter);
+    // Outer — blue
+    const outer = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.35, 1)),
+      new THREE.LineBasicMaterial({ color: 0x388bfd, transparent: true, opacity: 0.65 })
+    );
+    scene.add(outer);
 
-    // Inner icosahedron — green, counter-rotates
-    const geoInner  = new THREE.IcosahedronGeometry(0.82, 1);
-    const matInner  = new THREE.LineBasicMaterial({ color: 0x3fb950, transparent: true, opacity: 0.42 });
-    const meshInner = new THREE.LineSegments(new THREE.EdgesGeometry(geoInner), matInner);
-    meshInner.rotation.x = Math.PI / 5;
-    meshInner.rotation.z = Math.PI / 7;
-    scene.add(meshInner);
+    // Inner — green, offset orientation
+    const inner = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(0.82, 1)),
+      new THREE.LineBasicMaterial({ color: 0x3fb950, transparent: true, opacity: 0.42 })
+    );
+    inner.rotation.x = Math.PI / 5;
+    inner.rotation.z = Math.PI / 7;
+    scene.add(inner);
 
     let autoRot = 0;
-    let targetMx = 0, targetMy = 0;
-    let smoothMx = 0, smoothMy = 0;
+    let tMx = 0, tMy = 0, sMx = 0, sMy = 0;
 
     window.addEventListener('mousemove', e => {
-      targetMx = (e.clientX / window.innerWidth  - 0.5) * 1.2;
-      targetMy = (e.clientY / window.innerHeight - 0.5) * 0.8;
+      tMx = (e.clientX / window.innerWidth  - 0.5) * 1.2;
+      tMy = (e.clientY / window.innerHeight - 0.5) * 0.8;
     });
 
-    (function renderLoop() {
-      requestAnimationFrame(renderLoop);
+    (function loop() {
+      requestAnimationFrame(loop);
       autoRot += 0.006;
-
-      smoothMx += (targetMx - smoothMx) * 0.05;
-      smoothMy += (targetMy - smoothMy) * 0.05;
-
-      meshOuter.rotation.y = autoRot + smoothMx;
-      meshOuter.rotation.x = smoothMy * 0.6;
-
-      meshInner.rotation.y = -autoRot * 0.65 + smoothMx * 0.5;
-      meshInner.rotation.x = -autoRot * 0.3  - smoothMy * 0.4;
-
+      sMx += (tMx - sMx) * 0.05;
+      sMy += (tMy - sMy) * 0.05;
+      outer.rotation.y =  autoRot       + sMx;
+      outer.rotation.x =  sMy * 0.6;
+      inner.rotation.y = -autoRot * 0.65 + sMx * 0.5;
+      inner.rotation.x = -autoRot * 0.3  - sMy * 0.4;
       renderer.render(scene, camera);
     })();
 
     window.addEventListener('resize', () => {
-      const nw = canvas.clientWidth;
-      const nh = canvas.clientHeight;
-      renderer.setSize(nw, nh, false);
-      camera.aspect = nw / nh;
-      camera.updateProjectionMatrix();
+      const s = canvas.clientWidth;
+      renderer.setSize(s, s, false);
     });
 
 
     // ── Custom cursor ─────────────────────────────────────────────────────
 
-    const dot  = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
-    let curX = 0, curY = 0;
-    let posX = 0, posY = 0;
+    const cd = document.getElementById('cd');
+    const cr = document.getElementById('cr');
+    let cx = 0, cy = 0, px = 0, py = 0;
 
     document.addEventListener('mousemove', e => {
-      curX = e.clientX;
-      curY = e.clientY;
-      dot.style.transform = `translate(calc(${curX}px - 50%), calc(${curY}px - 50%))`;
-      document.body.classList.add('has-mouse');
+      cx = e.clientX; cy = e.clientY;
+      cd.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%))`;
+      document.body.classList.add('m');
     });
 
     (function lerpRing() {
-      posX += (curX - posX) * 0.1;
-      posY += (curY - posY) * 0.1;
-      ring.style.transform = `translate(calc(${posX}px - 50%), calc(${posY}px - 50%))`;
+      px += (cx - px) * 0.1;
+      py += (cy - py) * 0.1;
+      cr.style.transform = `translate(calc(${px}px - 50%), calc(${py}px - 50%))`;
       requestAnimationFrame(lerpRing);
     })();
 
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('hovered'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('hovered'));
+    document.querySelectorAll('a').forEach(el => {
+      el.addEventListener('mouseenter', () => cr.classList.add('h'));
+      el.addEventListener('mouseleave', () => cr.classList.remove('h'));
     });
 
 
-    // ── Magnetic buttons ───────────────────────────────────────────────────
+    // ── Magnetic rows ─────────────────────────────────────────────────────
 
     document.querySelectorAll('.magnetic').forEach(el => {
       el.addEventListener('mousemove', e => {
-        const r  = el.getBoundingClientRect();
-        const dx = (e.clientX - (r.left + r.width  / 2)) * 0.28;
-        const dy = (e.clientY - (r.top  + r.height / 2)) * 0.28;
+        const r = el.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width  / 2)) * 0.22;
+        const dy = (e.clientY - (r.top  + r.height / 2)) * 0.22;
         el.style.transform  = `translate(${dx}px, ${dy}px)`;
         el.style.transition = 'transform 0.1s ease';
       });
       el.addEventListener('mouseleave', () => {
         el.style.transform  = '';
-        el.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        el.style.transition = 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';
       });
     });
 
 
-    // ── Live Perth clock ───────────────────────────────────────────────────
+    // ── Live Perth clock ──────────────────────────────────────────────────
 
-    const clockEl = document.getElementById('clock');
-    function tick() {
-      clockEl.textContent = new Date().toLocaleTimeString('en-AU', {
-        timeZone: 'Australia/Perth',
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-      });
-    }
+    const clk = document.getElementById('clock');
+    const tick = () => clk.textContent = new Date().toLocaleTimeString('en-AU', {
+      timeZone: 'Australia/Perth', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
     tick();
     setInterval(tick, 1000);
-
-
-    // ── Nav background on scroll ───────────────────────────────────────────
-
-    const navEl = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      navEl.classList.toggle('scrolled', window.scrollY > 40);
-    }, { passive: true });
 
   </script>
 </body>
