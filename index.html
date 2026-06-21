@@ -84,13 +84,10 @@
     .left {
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding: clamp(48px, 7vh, 80px) 48px clamp(36px, 5vh, 56px) clamp(40px, 5vw, 80px);
+      justify-content: space-between;
+      padding: clamp(40px, 6vh, 72px) 48px clamp(36px, 5vh, 60px) clamp(40px, 5vw, 80px);
       border-right: 1px solid var(--border);
     }
-
-    .intro { margin-bottom: clamp(40px, 5.5vh, 60px); }
-    .links { margin-top: auto; }
 
     /* name */
     h1 {
@@ -124,26 +121,30 @@
     }
 
     .app-icon {
-      width: clamp(56px, 6.5vw, 80px);
-      height: clamp(56px, 6.5vw, 80px);
-      border-radius: 50%;
+      width: clamp(64px, 7.5vw, 92px);
+      height: clamp(64px, 7.5vw, 92px);
+      border-radius: 22%;
       overflow: hidden;
-      background: #131820;
-      flex-shrink: 0;
+      background: #161b22;
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      padding: 13%;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                   box-shadow 0.3s ease;
+      flex-shrink: 0;
     }
 
     .app-icon img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       display: block;
     }
 
     .app-item:hover .app-icon {
-      transform: scale(1.14) translateY(-5px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+      transform: scale(1.12) translateY(-6px);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.55),
+                  inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
     .app-label {
@@ -221,7 +222,7 @@
       content: '';
       position: absolute;
       inset: -80px;
-      background: radial-gradient(ellipse at center, rgba(56,139,253,0.06) 0%, transparent 68%);
+      background: radial-gradient(ellipse at center, rgba(102,80,196,0.09) 0%, transparent 68%);
       pointer-events: none;
     }
 
@@ -273,7 +274,7 @@
           </a>
 
           <a class="app-item" href="https://github.com/psilde/depth-public" target="_blank" rel="noopener">
-            <div class="app-icon"><img src="icons/depth.png" alt="Depth"/></div>
+            <div class="app-icon"><img src="icons/depth.svg" alt="Depth"/></div>
             <div class="app-label">
               <span class="app-name">Depth</span>
               <span class="app-desc">Valorant lobby tracker</span>
@@ -329,53 +330,79 @@
   <script type="module">
     import * as THREE from 'three';
 
-    // ── Three.js dual icosahedron ─────────────────────────────────────────
+    // ── Three.js gem ──────────────────────────────────────────────────────
 
     const canvas = document.getElementById('c');
-    const W = canvas.clientWidth;
-    const H = canvas.clientHeight;
-
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setSize(W, H, false);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.z = 4.2;
+    camera.position.z = 4.8;
 
-    // Outer — blue
-    const outer = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.35, 1)),
-      new THREE.LineBasicMaterial({ color: 0x388bfd, transparent: true, opacity: 0.65 })
-    );
-    scene.add(outer);
+    // Dim ambient keeps unlit faces visible but dark
+    const ambient = new THREE.AmbientLight(0x1a1248, 3.5);
+    scene.add(ambient);
 
-    // Inner — green, offset orientation
-    const inner = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(0.82, 1)),
-      new THREE.LineBasicMaterial({ color: 0x3fb950, transparent: true, opacity: 0.42 })
-    );
-    inner.rotation.x = Math.PI / 5;
-    inner.rotation.z = Math.PI / 7;
-    scene.add(inner);
+    // Static fill — edge definition from the left
+    const fill = new THREE.DirectionalLight(0x6652c8, 0.6);
+    fill.position.set(-3, 2, 2);
+    scene.add(fill);
+
+    // Mouse-driven shine — white point light that follows cursor
+    const shine = new THREE.PointLight(0xffffff, 4.5, 20);
+    shine.position.set(0, 2, 4.5);
+    scene.add(shine);
+
+    // Flat-shaded phong: crisp facets, strong specular response
+    const mat = new THREE.MeshPhongMaterial({
+      color: 0x5248a8,
+      specular: 0xe8d8ff,
+      shininess: 220,
+      flatShading: true,
+    });
+
+    // Crown: 6-sided frustum — narrow table top, wide girdle
+    const crownGeo = new THREE.CylinderGeometry(0.32, 1.0, 0.72, 6, 1, false);
+    const crown = new THREE.Mesh(crownGeo, mat);
+    crown.position.y = 0.36; // bottom of crown at y=0 (girdle)
+
+    // Pavilion: 6-sided cone — base at girdle, tip down
+    // ConeGeometry default: apex UP at +h/2, base DOWN at -h/2
+    // After rotateX(π): apex DOWN at -h/2, base UP at +h/2
+    const pavGeo = new THREE.ConeGeometry(1.0, 1.5, 6, 1, false);
+    pavGeo.rotateX(Math.PI);
+    const pav = new THREE.Mesh(pavGeo, mat);
+    pav.position.y = -0.75; // base (now at +h/2=+0.75) aligns with y=0
+
+    const gem = new THREE.Group();
+    gem.add(crown);
+    gem.add(pav);
+    scene.add(gem);
 
     let autoRot = 0;
     let tMx = 0, tMy = 0, sMx = 0, sMy = 0;
+    let tLx = 0, tLy = 2, sLx = 0, sLy = 2;
 
     window.addEventListener('mousemove', e => {
-      tMx = (e.clientX / window.innerWidth  - 0.5) * 1.2;
-      tMy = (e.clientY / window.innerHeight - 0.5) * 0.8;
+      const nx = (e.clientX / innerWidth)  * 2 - 1;
+      const ny = -(e.clientY / innerHeight) * 2 + 1;
+      tMx = nx * 0.35;
+      tMy = ny * 0.25;
+      tLx = nx * 5.5; // shine sweeps wide in X
+      tLy = ny * 4.0; // and in Y
     });
 
     (function loop() {
       requestAnimationFrame(loop);
-      autoRot += 0.006;
-      sMx += (tMx - sMx) * 0.05;
-      sMy += (tMy - sMy) * 0.05;
-      outer.rotation.y =  autoRot       + sMx;
-      outer.rotation.x =  sMy * 0.6;
-      inner.rotation.y = -autoRot * 0.65 + sMx * 0.5;
-      inner.rotation.x = -autoRot * 0.3  - sMy * 0.4;
+      autoRot += 0.004;
+      gem.rotation.y = autoRot;
+      sMx += (tMx - sMx) * 0.04;
+      sMy += (tMy - sMy) * 0.04;
+      gem.rotation.x = sMy;
+      sLx += (tLx - sLx) * 0.06;
+      sLy += (tLy - sLy) * 0.06;
+      shine.position.set(sLx, sLy, 4.5);
       renderer.render(scene, camera);
     })();
 
