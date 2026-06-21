@@ -1,0 +1,15 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#081020"/>
+      <stop offset="100%" stop-color="#040810"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- magnifying glass circle -->
+  <circle cx="208" cy="208" r="112" fill="none" stroke="white" stroke-width="48" opacity="0.95"/>
+  <!-- handle -->
+  <line x1="288" y1="288" x2="412" y2="412" stroke="white" stroke-width="48" stroke-linecap="round"/>
+  <!-- small price tag / lightning inside lens -->
+  <path d="M208 158 L234 220 L210 204 L226 258 L182 196 L208 212 Z" fill="white" opacity="0.9"/>
+</svg>
