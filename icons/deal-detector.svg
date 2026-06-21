@@ -1,5 +1,5 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <!-- magnifying glass -->
-  <circle cx="208" cy="208" r="116" fill="none" stroke="white" stroke-width="52" opacity="0.9"/>
-  <line x1="290" y1="290" x2="420" y2="420" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <rect width="512" height="512" fill="#131820"/>
+  <circle cx="220" cy="220" r="128" fill="none" stroke="white" stroke-width="52" opacity="0.9"/>
+  <line x1="316" y1="316" x2="436" y2="436" stroke="white" stroke-width="52" stroke-linecap="round"/>
 </svg>
