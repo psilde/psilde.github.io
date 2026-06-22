@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Depth | Paul Silver</title>
+  <meta name="description" content="How I built a Valorant tracker application used by the top percentile of players across the Australian competitive scene." />
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d1117;
+      --border:   #21262d;
+      --text:     #e6edf3;
+      --muted:    #7d8590;
+      --dim:      #4d5562;
+      --accent:   #388bfd;
+      --green:    #3fb950;
+      --purple:   #7c5cfc;
+      --purple-d: rgba(124,92,252,0.12);
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--purple), #3fb950 50%, transparent 75%);
+      z-index: 100;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(13,17,23,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(24px, 5vw, 64px);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .back:hover { color: var(--muted); }
+
+    .nav-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      border-bottom: 1px solid var(--border);
+      padding: clamp(48px, 8vh, 88px) clamp(24px, 5vw, 64px) clamp(40px, 6vh, 72px);
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .hero-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 22%;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      padding: 3px;
+      flex-shrink: 0;
+    }
+
+    .hero-icon img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple);
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--text);
+      background: none;
+      -webkit-text-fill-color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 600px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 28px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .stat { display: flex; flex-direction: column; gap: 3px; }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ── Article body ── */
+    article {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: clamp(40px, 6vh, 72px) clamp(24px, 5vw, 64px) 100px;
+    }
+
+    .section { margin-bottom: 52px; }
+
+    .section-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+
+    p:last-child { margin-bottom: 0; }
+
+    p strong { color: var(--text); font-weight: 500; }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    /* ── Diagram ── */
+    .diagram {
+      margin: 24px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      background: rgba(255,255,255,0.02);
+      overflow-x: auto;
+    }
+
+    .diagram-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: nowrap;
+      min-width: fit-content;
+    }
+
+    .diag-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .diag-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .diag-node {
+      background: rgba(124,92,252,0.1);
+      border: 1px solid rgba(124,92,252,0.25);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .diag-node.green {
+      background: rgba(63,185,80,0.1);
+      border-color: rgba(63,185,80,0.25);
+    }
+
+    .diag-node.blue {
+      background: rgba(56,139,253,0.1);
+      border-color: rgba(56,139,253,0.25);
+    }
+
+    .diag-arrow {
+      font-size: 14px;
+      color: var(--dim);
+      padding: 0 10px;
+      flex-shrink: 0;
+      margin-top: 18px;
+    }
+
+    .diagram-caption {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--dim);
+      text-align: center;
+    }
+
+    /* ── Code block ── */
+    .code-block {
+      margin: 20px 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .code-block pre {
+      padding: 16px;
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .code-block pre .kw  { color: var(--purple); }
+    .code-block pre .str { color: var(--green);  }
+    .code-block pre .cm  { color: var(--dim);    }
+    .code-block pre .ty  { color: #e3b341;        }
+
+    /* ── Callout / blockquote ── */
+    .callout {
+      margin: 24px 0;
+      padding: 18px 20px;
+      border-left: 3px solid var(--purple);
+      background: var(--purple-d);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .callout p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .callout-attr {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--dim);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    /* ── Feature list ── */
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .feature-list li::before {
+      content: '';
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--purple);
+      flex-shrink: 0;
+      margin-top: 9px;
+    }
+
+    .feature-list li strong { color: var(--text); font-weight: 500; }
+
+    /* ── Tags ── */
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--dim);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+
+    /* ── CTA ── */
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .cta:hover {
+      border-color: var(--muted);
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      text-decoration: none;
+    }
+
+    .cta.primary {
+      background: var(--purple-d);
+      border-color: rgba(124,92,252,0.3);
+      color: #b8a4fc;
+    }
+    .cta.primary:hover {
+      background: rgba(124,92,252,0.18);
+      border-color: rgba(124,92,252,0.5);
+      color: #cbbdfd;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .hero-stats { gap: 20px; }
+      .diagram-flow { gap: 0; }
+      h2 { font-size: 18px; }
+      .hero h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="back" href="/">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M9 2L4 7l5 5"/>
+      </svg>
+      Paul Silver
+    </a>
+    <span class="nav-tag">Project</span>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-meta">
+      <div class="hero-icon"><img src="icons/depth.png" alt="Depth" /></div>
+      <span class="hero-label">Depth</span>
+    </div>
+
+    <h1>Building a Valorant tracker application for the Australian competitive scene</h1>
+
+    <p class="hero-desc">
+      A no-login standalone desktop application that surfaces live lobby intelligence before a Valorant
+      match starts. Depth operates as a comprehensive tracker, actively preventing high elo players from 
+      getting repeatedly wintraded, matched against known cheaters, or queued with smurfs. 
+      It runs alone to ensure maximum efficiency with zero performance overhead. 
+      Built on Tauri and Rust, used daily by players across Australian Diamond+ lobbies.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-value">Radiant</span>
+        <span class="stat-label">Player base</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">Top of server</span>
+        <span class="stat-label">Target audience</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">Tauri · Rust</span>
+        <span class="stat-label">Stack</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">Active</span>
+        <span class="stat-label">Status</span>
+      </div>
+    </div>
+  </div>
+
+  <article>
+
+    <div class="section">
+      <div class="section-eyebrow">Origin</div>
+      <h2>Why I built it</h2>
+      <p>
+        The Australian Valorant ranked scene at high elo is small. At Ascendant and above, you run into the same
+        players repeatedly. Before a match even starts, the lobby tells you a lot. Who's smurfing.
+        Who's a known cheater. Who is repeatedly wintrading. That information exists, but the
+        game doesn't surface it.
+      </p>
+      <p>
+        The tool most players were using was <strong>ValRadiant</strong>. It worked, but they ran into security problems, was bannable, and a footprint that competitive players who will close every background
+        app to reclaim FPS weren't willing to tolerate. I wanted something that opened in under a second,
+        sat silently in the taskbar, and gives you exactly what you need when agent select appears. Nothing more.
+      </p>
+      <p>
+        I started building Depth because I was frustrated with the existing options. I finished it because
+        people in the community kept asking when it would be ready.
+      </p>
+    </div>
+
+    <hr />
+
+    <div class="section">
+      <div class="section-eyebrow">Architecture</div>
+      <h2>How the no-login approach works</h2>
+      <p>
+        The most common question I get: <em>how does Depth read my game data without asking for my password?</em>
+        This was the design decision I thought hardest about, and the answer is grounded in how the Riot Client
+        actually works at a system level.
+      </p>
+      <p>
+        When Valorant is running, the Riot Client exposes a local REST API on your machine, accessible only
+        from localhost. To authenticate against it, the client writes a <strong>lockfile</strong> to a known
+        path on disk containing a randomly-generated port number and a one-time basic-auth password:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">Lockfile path</div>
+        <pre>%LOCALAPPDATA%\Riot Games\Riot Client\Config\lockfile</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">Lockfile format</div>
+        <pre><span class="cm">// name:pid:port:password:protocol</span>
+RiotClient:<span class="str">12345</span>:<span class="str">52148</span>:<span class="str">abc123xyz...</span>:https</pre>
+      </div>
+
+      <p>
+        Depth reads this file, authenticates against the local client, and retrieves your session data:
+        your PUUID and server shard. From there, it queries Riot's Player Data (PD) API using standard
+        Riot authentication headers derived from the local session. <strong>Your Riot credentials are never
+        touched by Depth.</strong> They never leave your machine. There's nothing to leak.
+      </p>
+
+      <div class="diagram">
+        <div class="diagram-flow">
+          <div class="diag-box">
+            <div class="diag-label">On disk</div>
+            <div class="diag-node">Lockfile</div>
+          </div>
+          <div class="diag-arrow">→</div>
+          <div class="diag-box">
+            <div class="diag-label">Local (127.0.0.1)</div>
+            <div class="diag-node">Riot Client API</div>
+          </div>
+          <div class="diag-arrow">→</div>
+          <div class="diag-box">
+            <div class="diag-label">Depth backend</div>
+            <div class="diag-node">Session + PUUID</div>
+          </div>
+          <div class="diag-arrow">→</div>
+          <div class="diag-box">
+            <div class="diag-label">Riot servers</div>
+            <div class="diag-node blue">PD API</div>
+          </div>
+          <div class="diag-arrow">→</div>
+          <div class="diag-box">
+            <div class="diag-label">Rendered</div>
+            <div class="diag-node green">Depth application</div>
+          </div>
+        </div>
+        <div class="diagram-caption">Data flow: no credentials stored or transmitted by Depth</div>
+      </div>
+
+      <p>
+        I chose this approach deliberately. Asking players to hand over their Riot credentials to a third-party
+        app is a significant trust ask, especially in a community that's seen account theft before. By building
+        on the lockfile API, Depth can provide the same data without ever touching user information, and players
+        can verify this themselves by looking at what the app actually does.
+      </p>
+    </div>
+
+    <hr />
+
+    <div class="section">
+      <div class="section-eyebrow">Design decisions</div>
+      <h2>Why Tauri over Electron, and why it matters for this audience</h2>
+      <p>
+        Performance was the non-negotiable constraint from day one. Competitive Valorant players close Discord,
+        their browser, and anything else that breathes RAM before queuing. A companion app that costs FPS
+        doesn't get used.
+      </p>
+      <p>
+        Electron, the obvious choice for cross-platform desktop apps, bundles a full Chromium browser. That's
+        roughly <strong>150–300MB</strong> of baseline memory overhead before your app does anything. For a tool
+        that just displays some JSON, that's absurd.
+      </p>
+      <p>
+        Tauri uses the operating system's native WebView (WebView2 on Windows, which is already installed as part
+        of the OS) and a Rust backend. The Depth installer is under <strong>10MB</strong>. Runtime memory usage
+        is a fraction of what Electron would cost. The Rust backend handles all API calls and data processing
+        with no garbage collector overhead. It either works or it doesn't.
+      </p>
+
+      <div class="callout">
+        <p>"I've enabled Fast mode on my PC and depth is still the one thing that never gets removed from the startup list. It's genuinely lighter than Discord notifications."</p>
+        <div class="callout-attr">Community member, Depth Discord</div>
+      </div>
+
+      <p>
+        The other decision: <strong>standalone application architecture</strong>. Depth is perfectly optimised by
+        just being a desktop application that runs alone. This removes unnecessary performance overhead,
+        is far more efficient, and guarantees players don't drop frames during critical moments
+        while still having full access to tracker data.
+      </p>
+    </div>
+
+    <hr />
+
+    <div class="section">
+      <div class="section-eyebrow">Engineering challenge</div>
+      <h2>Hitting API limits at scale, and how I solved it</h2>
+      <p>
+        When Depth had a few users, everything ran fine. As the user base grew, a problem emerged:
+        every lobby load triggers API calls for up to <strong>10 players simultaneously</strong>: rank data,
+        match history, agent statistics. At a few thousand concurrent users during peak hours, that's tens of
+        thousands of calls per minute hitting Riot's PD API.
+      </p>
+      <p>
+        The API started rate-limiting requests. Users were seeing incomplete lobby data. Some players would
+        load, others would show as unknown. The root cause was clear: too many redundant calls for the same players.
+        In a small ranked scene, you frequently queue against the same opponents you faced an hour ago.
+      </p>
+      <p>
+        The fix was a <strong>server-side caching layer</strong> in the Rust backend. Player data is cached with
+        a short TTL, typically a few minutes. Long enough that repeated lookups within the same session are
+        served from cache, but short enough that rank changes propagate quickly.
+      </p>
+
+      <div class="diagram">
+        <div class="diagram-flow">
+          <div class="diag-box">
+            <div class="diag-label">Request</div>
+            <div class="diag-node">PUUID lookup</div>
+          </div>
+          <div class="diag-arrow">→</div>
+          <div class="diag-box">
+            <div class="diag-label">Cache check</div>
+            <div class="diag-node">In cache?</div>
+          </div>
+          <div class="diag-arrow">↗ yes</div>
+          <div class="diag-box">
+            <div class="diag-label">Serve cached</div>
+            <div class="diag-node green">Return data</div>
+          </div>
+        </div>
+        <div class="diagram-caption">Cache hit path: no API call made</div>
+      </div>
+
+      <p>
+        The effect was immediate. API error rates dropped significantly and lobby load times improved,
+        because cache hits return in microseconds rather than waiting on a round-trip to Riot's servers.
+        The caching layer also made the app more resilient to Riot API outages: degraded data is better
+        than no data.
+      </p>
+    </div>
+
+    <hr />
+
+    <div class="section">
+      <div class="section-eyebrow">Community & feedback</div>
+      <h2>Responding to users: the dodge problem</h2>
+      <p>
+        Depth has an active Discord server where users report bugs, request features, and give feedback.
+        One recurring complaint that took me time to properly understand: the <strong>dodge workflow was broken</strong>.
+      </p>
+      <p>
+        In Valorant, if a player wants to leave a lobby before the match starts (taking a rank penalty to
+        avoid a bad match or dodge known cheaters), they typically close the game client. The problem: Depth would cache the previous
+        lobby state. When the player relaunched and queued again, Depth was still showing data from the old
+        lobby, requiring a full app restart to get accurate data.
+      </p>
+      <p>
+        A user opened a ticket explaining the exact sequence: dodge → relaunch → requeue → stale data. Initially
+        I'd overlooked this edge case because it seemed rare. But in the competitive community, dodging is common,
+        especially at high elo where a single bad match can cost significant RR.
+      </p>
+      <p>
+        The fix was straightforward once I understood the problem: poll the Riot Client's lobby state endpoint
+        and invalidate the cache whenever the lobby ID changes. If a player dodges, relaunches, and finds a new
+        lobby, Depth detects the new lobby ID and fetches fresh data automatically. No restart required.
+      </p>
+
+      <div class="callout">
+        <p>"i literally cannot play without depth bro it's actually essential at this point."</p>
+        <div class="callout-attr">A user from the discord</div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="section">
+      <div class="section-eyebrow">Delivery</div>
+      <h2>Auto-updates and CI/CD</h2>
+      <p>
+        One of the things that distinguishes a real product from a side project is how updates get delivered.
+        I integrated <strong>Tauri's auto-updater</strong> early so that pushing a fix doesn't require users
+        to manually download a new installer.
+      </p>
+      <p>
+        The release pipeline runs on GitHub Actions: on every tagged release, CI builds and signs the Windows
+        installer, generates the update manifest, and publishes both to GitHub Releases. On startup, Depth
+        checks the releases endpoint. If a newer version is available, it prompts the user and applies the
+        update in the background. The next launch runs the new version.
+      </p>
+      <p>
+        This meant that when I shipped the fix for the dodge bug, all active users were on the new version
+        within 24 hours, without me having to tell anyone to update.
+      </p>
+    </div>
+
+    <hr />
+
+    <div class="section">
+      <div class="section-eyebrow">Honest limitations</div>
+      <h2>What doesn't work perfectly yet</h2>
+      <ul class="feature-list">
+        <li>
+          <strong>API dependency:</strong> Depth relies on Riot's internal PD API, which is undocumented
+          and subject to change without notice. Riot has broken third-party tools before by rotating endpoints
+          or changing auth flows. Maintaining compatibility requires monitoring the community and responding quickly.
+        </li>
+        <li>
+          <strong>Windows only:</strong> The lockfile-based auth approach works differently on macOS. A macOS port is planned but not yet shipped.
+        </li>
+        <li>
+          <strong>Private profiles:</strong> Players who have enabled Riot's privacy settings hide their
+          match history and rank from the API. Depth shows what's available. For private accounts, some
+          fields are simply blank.
+        </li>
+        <li>
+          <strong>Initial load at peak:</strong> Despite caching, very large concurrent spikes (tournament
+          nights, patch days) can still produce occasional slow loads. This is an ongoing area of improvement.
+        </li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div class="section">
+      <div class="section-eyebrow">Tech stack</div>
+      <h2>What it's built with</h2>
+      <ul class="feature-list">
+        <li><strong>Tauri + Rust:</strong> System-native desktop app framework with a Rust backend. Handles the lockfile reading, local client auth, PD API calls, caching, and IPC to the frontend.</li>
+        <li><strong>React + TypeScript:</strong> Frontend UI rendered in the native WebView. Communicates with the Rust backend via Tauri's typed <code>invoke()</code> bridge.</li>
+        <li><strong>reqwest:</strong> Async HTTP client in Rust for all API communication.</li>
+        <li><strong>GitHub Actions:</strong> CI/CD pipeline that builds, signs, and publishes Windows installers on tag.</li>
+        <li><strong>Tauri Updater:</strong> Auto-update plugin that checks GitHub Releases for new versions on startup.</li>
+      </ul>
+      <div class="tags" style="margin-top: 20px;">
+        <span class="tag">Tauri</span>
+        <span class="tag">Rust</span>
+        <span class="tag">React</span>
+        <span class="tag">TypeScript</span>
+        <span class="tag">Windows</span>
+        <span class="tag">GitHub Actions</span>
+        <span class="tag">Riot API</span>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="cta-row">
+      <a class="cta primary" href="https://github.com/psilde/depth-public" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        View on GitHub
+      </a>
+      <a class="cta" href="/" >
+        ← Back to projects
+      </a>
+    </div>
+
+  </article>
+
+</body>
+</html>

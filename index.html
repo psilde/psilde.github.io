@@ -4,7 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Paul Silver</title>
-  <meta name="description" content="Software engineering student at Curtin University. Building desktop apps, APIs, and tools." />
+  <meta name="description" content="Software engineering student at Curtin University, Perth. Building desktop apps, APIs, and tools." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Paul Silver" />
+  <meta property="og:description" content="Software engineering student at Curtin University, Perth. Building desktop apps, APIs, and tools." />
+  <meta property="og:image" content="https://psilde.github.io/icons/og.png" />
+  <meta property="og:url" content="https://psilde.github.io" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Paul Silver" />
+  <meta name="twitter:description" content="Software engineering student at Curtin University, Perth. Building desktop apps, APIs, and tools." />
+  <meta name="twitter:image" content="https://psilde.github.io/icons/og.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -13,7 +31,6 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      cursor: none !important;
     }
 
     :root {
@@ -28,14 +45,12 @@
 
     html, body {
       height: 100%;
-      overflow: hidden;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
     }
 
-    /* top accent line */
     body::before {
       content: '';
       position: fixed;
@@ -45,39 +60,12 @@
       z-index: 100;
     }
 
-    /* ── Custom cursor ── */
-    #cd {
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 9999;
-      width: 5px; height: 5px;
-      background: var(--text);
-      border-radius: 50%;
-      pointer-events: none;
-      will-change: transform;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    #cr {
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 9998;
-      width: 30px; height: 30px;
-      border: 1px solid rgba(56,139,253,0.5);
-      border-radius: 50%;
-      pointer-events: none;
-      will-change: transform;
-      opacity: 0;
-      transition: width .2s, height .2s, border-color .2s, opacity .3s;
-    }
-    body.m #cd, body.m #cr { opacity: 1; }
-    #cr.h { width: 48px; height: 48px; border-color: rgba(56,139,253,0.9); }
-
     /* ── Layout ── */
     .layout {
       height: 100vh;
       display: grid;
       grid-template-columns: 1fr 1fr;
+      overflow: hidden;
     }
 
     /* ── Left ── */
@@ -87,11 +75,11 @@
       justify-content: space-between;
       padding: clamp(40px, 6vh, 72px) 48px clamp(36px, 5vh, 60px) clamp(40px, 5vw, 80px);
       border-right: 1px solid var(--border);
+      overflow-y: auto;
     }
 
-    /* name */
     h1 {
-      font-size: clamp(64px, 8vw, 112px);
+      font-size: clamp(56px, 7.5vw, 108px);
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 0.92;
@@ -101,71 +89,130 @@
       background-clip: text;
     }
 
-    /* ── App grid ── */
+    .tagline {
+      margin-top: 22px;
+      font-size: 13.5px;
+      font-weight: 400;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 340px;
+    }
+
+    .tagline strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── Projects ── */
     .projects { flex: 0 0 auto; }
 
-    .app-grid {
-      display: flex;
-      gap: clamp(20px, 3.5vw, 48px);
-      align-items: flex-start;
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 4px;
     }
 
-    .app-item {
+    .project-list {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 10px;
+    }
+
+    .project-card {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
       text-decoration: none;
       color: inherit;
-      flex: 0 0 auto;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
     }
 
-    .app-icon {
-      width: clamp(64px, 7.5vw, 92px);
-      height: clamp(64px, 7.5vw, 92px);
-      border-radius: 22%;
+    .project-card:first-of-type {
+      border-top: 1px solid var(--border);
+    }
+
+    .project-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 20%;
       overflow: hidden;
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.1);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      padding: 13%;
-      transition: transform 0.25s cubic-bezier(0.34, 1.15, 0.64, 1),
-                  box-shadow 0.25s ease;
+      background: transparent;
+      padding: 0;
       flex-shrink: 0;
+      margin-top: 1px;
     }
 
-    .app-icon img {
+    .project-icon img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
     }
 
-    .app-item:hover .app-icon {
-      transform: scale(1.12) translateY(-6px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    .project-body { flex: 1; min-width: 0; }
+
+    .project-icon-placeholder {
+      width: 26px;
+      flex-shrink: 0;
     }
 
-    .app-label {
-      position: relative;
-      height: 28px;
-      width: 90px;
-      text-align: center;
+    .project-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 3px;
     }
 
-    .app-name, .app-desc {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
+    .project-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      transition: color 0.15s;
+    }
+
+    .project-arrow {
       font-size: 11px;
-      transition: opacity 0.18s ease;
+      color: var(--dim);
+      flex-shrink: 0;
+      transition: transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1), color 0.15s;
     }
 
-    .app-name { bottom: 0; color: var(--muted); font-weight: 500; opacity: 1; }
-    .app-desc  { top: 0;    color: var(--dim);   font-weight: 400; opacity: 0; }
+    .project-card:hover .project-name { color: #ffffff; }
+    .project-card:hover .project-arrow {
+      transform: translate(3px, -3px);
+      color: var(--muted);
+    }
 
-    .app-item:hover .app-desc { opacity: 1; }
+    .project-type {
+      font-size: 11px;
+      color: var(--dim);
+      margin-bottom: 5px;
+    }
+
+    .project-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--dim);
+      font-variant-numeric: tabular-nums;
+    }
 
     /* ── Bottom bar ── */
     .links {
@@ -207,6 +254,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      overflow: hidden;
     }
 
     .canvas-wrap {
@@ -232,66 +280,142 @@
       z-index: 1;
     }
 
-    /* ── Mobile fallback ── */
+    /* ── Mobile ── */
     @media (max-width: 700px) {
-      html, body { overflow: auto; }
-      .layout { grid-template-columns: 1fr; height: auto; }
-      .left { border-right: none; border-bottom: 1px solid var(--border); padding: 48px 28px 40px; }
-      .right { padding: 48px 28px; order: -1; }
-      #c { width: clamp(220px, 70vw, 320px); }
-      .app-grid { gap: 16px; }
-      .app-icon { width: 56px; height: 56px; }
-      *, *::before, *::after { cursor: auto !important; }
-      #cd, #cr { display: none; }
+      html, body { height: auto; }
+
+      .layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+      }
+
+      .left {
+        border-right: none;
+        padding: 56px 28px 44px;
+        overflow-y: visible;
+        justify-content: flex-start;
+        gap: 44px;
+      }
+
+      .right { display: none; }
+
+      h1 { font-size: clamp(52px, 14vw, 80px); }
+
+      .tagline {
+        font-size: 13px;
+        max-width: 100%;
+        margin-top: 16px;
+      }
+
+      .links { gap: 12px; }
+    }
+
+    @media (max-width: 380px) {
+      .left { padding: 48px 20px 36px; }
+      h1 { font-size: 48px; }
     }
   </style>
 </head>
 <body>
 
-  <div id="cd"></div>
-  <div id="cr"></div>
-
   <main class="layout">
 
-    <!-- LEFT: identity + projects + links -->
     <div class="left">
 
       <div class="intro">
         <h1>Paul<br>Silver.</h1>
+        <p class="tagline">
+          Software engineering student at <strong>Curtin University</strong>.<br>
+          Building desktop apps, APIs, and tools that solve real problems.
+        </p>
       </div>
 
       <div class="projects">
-        <div class="app-grid">
+        <p class="section-label">Projects</p>
+        <div class="project-list">
 
-          <a class="app-item" href="https://github.com/psilde/slackbuilder" target="_blank" rel="noopener">
-            <div class="app-icon"><img src="icons/slackbuilder.png" alt="Slackbuilder"/></div>
-            <div class="app-label">
-              <span class="app-name">Slackbuilder</span>
-              <span class="app-desc">AI desktop Slack composer</span>
+          <a class="project-card" href="/depth.html">
+            <div class="project-icon"><img src="icons/depth.png" alt="" /></div>
+            <div class="project-body">
+              <div class="project-header">
+                <span class="project-name">Depth</span>
+                <span class="project-arrow">↗</span>
+              </div>
+              <div class="project-type">Valorant companion overlay</div>
+              <p class="project-desc">
+                Transparent desktop overlay that surfaces live lobby data — ranks, agent history,
+                and peak rank — before a match starts. Also includes a daily skin store viewer,
+                all pulled from the local Riot client's internal API.
+              </p>
+              <div class="project-tags">
+                <span class="tag">Tauri</span>
+                <span class="tag">Rust</span>
+                <span class="tag">React</span>
+                <span class="tag">TypeScript</span>
+              </div>
             </div>
           </a>
 
-          <a class="app-item" href="https://github.com/psilde/depth-public" target="_blank" rel="noopener">
-            <div class="app-icon"><img src="icons/depth.svg" alt="Depth"/></div>
-            <div class="app-label">
-              <span class="app-name">Depth</span>
-              <span class="app-desc">Valorant lobby tracker</span>
+          <a class="project-card" href="/slackbuilder.html">
+            <div class="project-icon"><img src="icons/slackbuilder.png" alt="" /></div>
+            <div class="project-body">
+              <div class="project-header">
+                <span class="project-name">Slackbuilder</span>
+                <span class="project-arrow">↗</span>
+              </div>
+              <div class="project-type">AI Slack message composer</div>
+              <p class="project-desc">
+                Native desktop app for drafting and refining Slack messages with Claude AI.
+                Compose in a focused editor, adjust tone and length on the fly, then send
+                directly — without leaving the keyboard.
+              </p>
+              <div class="project-tags">
+                <span class="tag">Tauri</span>
+                <span class="tag">Claude AI</span>
+                <span class="tag">macOS</span>
+                <span class="tag">TypeScript</span>
+              </div>
             </div>
           </a>
 
-          <a class="app-item" href="https://github.com/psilde/deal-detector" target="_blank" rel="noopener">
-            <div class="app-icon"><img src="icons/deal-detector.svg" alt="Deal Detector"/></div>
-            <div class="app-label">
-              <span class="app-name">Deal Detector</span>
-              <span class="app-desc">Marketplace deal finder</span>
+          <a class="project-card" href="/deal-detector.html">
+            <div class="project-icon"><img src="icons/deal-detector.png" alt="" /></div>
+            <div class="project-body">
+              <div class="project-header">
+                <span class="project-name">Deal Detector</span>
+                <span class="project-arrow">↗</span>
+              </div>
+              <div class="project-type">Marketplace deal finder</div>
+              <p class="project-desc">
+                Automated scanner that monitors Australian online marketplaces for underpriced
+                listings. Set keywords and price thresholds — get notified when something worth
+                buying appears.
+              </p>
+              <div class="project-tags">
+                <span class="tag">Python</span>
+                <span class="tag">Web scraping</span>
+                <span class="tag">Automation</span>
+              </div>
             </div>
           </a>
 
-          <a class="app-item" href="https://github.com/psilde/cover-art" target="_blank" rel="noopener">
-            <div class="app-icon"><img src="icons/cover-art.svg" alt="Cover Art"/></div>
-            <div class="app-label">
-              <span class="app-name">Cover Art</span>
-              <span class="app-desc">Spotify cover extractor</span>
+          <a class="project-card" href="/cover-art.html">
+            <div class="project-icon"><img src="icons/cover-art.png" alt="" /></div>
+            <div class="project-body">
+              <div class="project-header">
+                <span class="project-name">Cover Art</span>
+                <span class="project-arrow">↗</span>
+              </div>
+              <div class="project-type">Spotify artwork extractor</div>
+              <p class="project-desc">
+                Utility for pulling full-resolution artwork from any Spotify track, album,
+                or playlist — the kind of quality that streaming thumbnails compress away.
+              </p>
+              <div class="project-tags">
+                <span class="tag">Python</span>
+                <span class="tag">Spotify API</span>
+              </div>
             </div>
           </a>
 
@@ -299,8 +423,6 @@
       </div>
 
       <div class="links">
-        <span class="link-info">Curtin University</span>
-        <span class="link-sep"></span>
         <span class="link-info">Perth, WA &mdash; <span id="clock">00:00:00</span></span>
         <span class="link-sep"></span>
         <a class="link magnetic" href="https://github.com/psilde" target="_blank" rel="noopener">GitHub</a>
@@ -312,7 +434,6 @@
 
     </div>
 
-    <!-- RIGHT: 3D shape -->
     <div class="right">
       <div class="canvas-wrap">
         <canvas id="c"></canvas>
@@ -328,8 +449,6 @@
   <script type="module">
     import * as THREE from 'three';
 
-    // ── Three.js gem ──────────────────────────────────────────────────────
-
     const canvas = document.getElementById('c');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -338,21 +457,17 @@
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.z = 4.8;
 
-    // Dim ambient keeps unlit faces visible but dark
     const ambient = new THREE.AmbientLight(0x1a1248, 3.5);
     scene.add(ambient);
 
-    // Static fill — edge definition from the left
     const fill = new THREE.DirectionalLight(0x6652c8, 2.0);
     fill.position.set(-3, 2, 2);
     scene.add(fill);
 
-    // Mouse-driven shine — white point light that follows cursor
     const shine = new THREE.PointLight(0xffffff, 14, 20);
     shine.position.set(0, 2, 4.5);
     scene.add(shine);
 
-    // Flat-shaded phong: crisp facets, strong specular response
     const mat = new THREE.MeshPhongMaterial({
       color: 0x9070e8,
       specular: 0xf0e8ff,
@@ -360,23 +475,26 @@
       flatShading: true,
     });
 
-    // Crown: 6-sided frustum — narrow table top, wide girdle
     const crownGeo = new THREE.CylinderGeometry(0.32, 1.0, 0.72, 6, 1, false);
     const crown = new THREE.Mesh(crownGeo, mat);
-    crown.position.y = 0.36; // bottom of crown at y=0 (girdle)
+    crown.position.y = 0.36;
 
-    // Pavilion: 6-sided cone — base at girdle, tip down
-    // ConeGeometry default: apex UP at +h/2, base DOWN at -h/2
-    // After rotateX(π): apex DOWN at -h/2, base UP at +h/2
     const pavGeo = new THREE.ConeGeometry(1.0, 1.5, 6, 1, false);
     pavGeo.rotateX(Math.PI);
     const pav = new THREE.Mesh(pavGeo, mat);
-    pav.position.y = -0.75; // base (now at +h/2=+0.75) aligns with y=0
+    pav.position.y = -0.75;
 
     const gem = new THREE.Group();
     gem.add(crown);
     gem.add(pav);
     scene.add(gem);
+
+    function handleResize() {
+      const s = canvas.clientWidth;
+      renderer.setSize(s, s, false);
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
 
     let autoRot = 0;
     let tMx = 0, tMy = 0, sMx = 0, sMy = 0;
@@ -387,8 +505,8 @@
       const ny = -(e.clientY / innerHeight) * 2 + 1;
       tMx = nx * 0.35;
       tMy = ny * 0.25;
-      tLx = nx * 5.5; // shine sweeps wide in X
-      tLy = ny * 4.0; // and in Y
+      tLx = nx * 5.5;
+      tLy = ny * 4.0;
     });
 
     (function loop() {
@@ -404,39 +522,6 @@
       renderer.render(scene, camera);
     })();
 
-    window.addEventListener('resize', () => {
-      const s = canvas.clientWidth;
-      renderer.setSize(s, s, false);
-    });
-
-
-    // ── Custom cursor ─────────────────────────────────────────────────────
-
-    const cd = document.getElementById('cd');
-    const cr = document.getElementById('cr');
-    let cx = 0, cy = 0, px = 0, py = 0;
-
-    document.addEventListener('mousemove', e => {
-      cx = e.clientX; cy = e.clientY;
-      cd.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%))`;
-      document.body.classList.add('m');
-    });
-
-    (function lerpRing() {
-      px += (cx - px) * 0.1;
-      py += (cy - py) * 0.1;
-      cr.style.transform = `translate(calc(${px}px - 50%), calc(${py}px - 50%))`;
-      requestAnimationFrame(lerpRing);
-    })();
-
-    document.querySelectorAll('a').forEach(el => {
-      el.addEventListener('mouseenter', () => cr.classList.add('h'));
-      el.addEventListener('mouseleave', () => cr.classList.remove('h'));
-    });
-
-
-    // ── Magnetic rows ─────────────────────────────────────────────────────
-
     document.querySelectorAll('.magnetic').forEach(el => {
       el.addEventListener('mousemove', e => {
         const r = el.getBoundingClientRect();
@@ -450,9 +535,6 @@
         el.style.transition = 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';
       });
     });
-
-
-    // ── Live Perth clock ──────────────────────────────────────────────────
 
     const clk = document.getElementById('clock');
     const tick = () => clk.textContent = new Date().toLocaleTimeString('en-AU', {
