@@ -121,13 +121,51 @@
     }
 
     .project-card {
+      position: relative;
       display: flex;
       gap: 11px;
       align-items: flex-start;
-      text-decoration: none;
-      color: inherit;
       padding: 13px 0;
       border-bottom: 1px solid var(--border);
+    }
+
+    .project-name-link {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .project-name-link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    .site-link-inline {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--dim);
+      text-decoration: none;
+      padding: 3px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .site-link-inline:hover {
+      border-color: var(--muted);
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
     }
 
     .project-card:first-of-type {
@@ -335,17 +373,20 @@
         <p class="section-label">Projects</p>
         <div class="project-list">
 
-          <a class="project-card" href="/depth.html">
+          <div class="project-card">
             <div class="project-icon"><img src="icons/depth.png" alt="" /></div>
             <div class="project-body">
               <div class="project-header">
-                <span class="project-name">Depth</span>
-                <span class="project-arrow">↗</span>
+                <a class="project-name-link" href="/depth.html">
+                  <span class="project-name">Depth</span>
+                  <span class="project-arrow">↗</span>
+                </a>
+                <a class="site-link-inline" href="https://depth.gg" target="_blank" rel="noopener">Website ↗</a>
               </div>
-              <div class="project-type">Valorant companion overlay</div>
+              <div class="project-type">Valorant companion app</div>
               <p class="project-desc">
-                Transparent desktop overlay that surfaces live lobby data — ranks, agent history,
-                and peak rank — before a match starts. Also includes a daily skin store viewer,
+                Standalone desktop app that surfaces live lobby data (ranks, agent history,
+                and peak rank) before a match starts. Also includes a daily skin store viewer,
                 all pulled from the local Riot client's internal API.
               </p>
               <div class="project-tags">
@@ -355,20 +396,22 @@
                 <span class="tag">TypeScript</span>
               </div>
             </div>
-          </a>
+          </div>
 
-          <a class="project-card" href="/slackbuilder.html">
+          <div class="project-card">
             <div class="project-icon"><img src="icons/slackbuilder.png" alt="" /></div>
             <div class="project-body">
               <div class="project-header">
-                <span class="project-name">Slackbuilder</span>
-                <span class="project-arrow">↗</span>
+                <a class="project-name-link" href="/slackbuilder.html">
+                  <span class="project-name">Slackbuilder</span>
+                  <span class="project-arrow">↗</span>
+                </a>
               </div>
               <div class="project-type">AI Slack message composer</div>
               <p class="project-desc">
                 Native desktop app for drafting and refining Slack messages with Claude AI.
                 Compose in a focused editor, adjust tone and length on the fly, then send
-                directly — without leaving the keyboard.
+                directly, without leaving the keyboard.
               </p>
               <div class="project-tags">
                 <span class="tag">Tauri</span>
@@ -377,47 +420,52 @@
                 <span class="tag">TypeScript</span>
               </div>
             </div>
-          </a>
+          </div>
 
-          <a class="project-card" href="/deal-detector.html">
+          <div class="project-card">
             <div class="project-icon"><img src="icons/deal-detector.png" alt="" /></div>
             <div class="project-body">
               <div class="project-header">
-                <span class="project-name">Deal Detector</span>
-                <span class="project-arrow">↗</span>
+                <a class="project-name-link" href="/deal-detector.html">
+                  <span class="project-name">Deal Detector</span>
+                  <span class="project-arrow">↗</span>
+                </a>
+                <a class="site-link-inline" href="https://dealsdemo.netlify.app/" target="_blank" rel="noopener">Website ↗</a>
               </div>
               <div class="project-type">Marketplace deal finder</div>
               <p class="project-desc">
                 Automated scanner that monitors Australian online marketplaces for underpriced
-                listings. Set keywords and price thresholds — get notified when something worth
+                listings. Set keywords and price thresholds, then get notified when something worth
                 buying appears.
               </p>
               <div class="project-tags">
-                <span class="tag">Python</span>
+                <span class="tag">Java</span>
                 <span class="tag">Web scraping</span>
                 <span class="tag">Automation</span>
               </div>
             </div>
-          </a>
+          </div>
 
-          <a class="project-card" href="/cover-art.html">
+          <div class="project-card">
             <div class="project-icon"><img src="icons/cover-art.png" alt="" /></div>
             <div class="project-body">
               <div class="project-header">
-                <span class="project-name">Cover Art</span>
-                <span class="project-arrow">↗</span>
+                <a class="project-name-link" href="/cover-art.html">
+                  <span class="project-name">Cover Art</span>
+                  <span class="project-arrow">↗</span>
+                </a>
               </div>
               <div class="project-type">Spotify artwork extractor</div>
               <p class="project-desc">
                 Utility for pulling full-resolution artwork from any Spotify track, album,
-                or playlist — the kind of quality that streaming thumbnails compress away.
+                or playlist: the kind of quality that streaming thumbnails compress away.
               </p>
               <div class="project-tags">
-                <span class="tag">Python</span>
+                <span class="tag">Java</span>
                 <span class="tag">Spotify API</span>
               </div>
             </div>
-          </a>
+          </div>
 
         </div>
       </div>

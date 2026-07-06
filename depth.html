@@ -142,6 +142,28 @@
       flex-wrap: wrap;
     }
 
+    .site-link {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .site-link:hover {
+      border-color: var(--muted);
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+    }
+
     .stat { display: flex; flex-direction: column; gap: 3px; }
 
     .stat-value {
@@ -448,6 +470,9 @@
     <div class="hero-meta">
       <div class="hero-icon"><img src="icons/depth.png" alt="Depth" /></div>
       <span class="hero-label">Depth</span>
+      <a class="site-link" href="https://depth.gg" target="_blank" rel="noopener">
+        Website ↗
+      </a>
     </div>
 
     <h1>Building a Valorant tracker application for the Australian competitive scene</h1>
@@ -457,16 +482,12 @@
       match starts. Depth operates as a comprehensive tracker, actively preventing high elo players from 
       getting repeatedly wintraded, matched against known cheaters, or queued with smurfs. 
       It runs alone to ensure maximum efficiency with zero performance overhead. 
-      Built on Tauri and Rust, used daily by players across Australian Diamond+ lobbies.
+      Built on Tauri and Rust, used daily by players across Australian Immortal+ lobbies.
     </p>
 
     <div class="hero-stats">
       <div class="stat">
-        <span class="stat-value">Radiant</span>
-        <span class="stat-label">Player base</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value">Top of server</span>
+        <span class="stat-value">Top players</span>
         <span class="stat-label">Target audience</span>
       </div>
       <div class="stat">
